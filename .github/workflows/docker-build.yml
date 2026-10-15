@@ -30,6 +30,8 @@ jobs:
           context: .
           platforms: linux/amd64
           load: true
+          build-args: |
+            APP_VERSION=${{ env.VERSION }}
           tags: |
             ${{ env.IMAGE }}:${{ env.VERSION }}
             ${{ env.IMAGE }}:latest
@@ -45,8 +47,11 @@ jobs:
 
           curl --fail --show-error --silent \
             --retry 5 --retry-connrefused --retry-delay 1 \
-            "http://127.0.0.1:18080/test?hello=world" \
-            | grep -Fq "hello=world"
+            --dump-header response-headers --output response-body \
+            "http://127.0.0.1:18080/test?hello=world"
+          grep -Fq "hello=world" response-body
+          grep -Fiq "Server: request-info-docker:$VERSION" response-headers
+          grep -Fiq "X-App-Version: $VERSION" response-headers
 
           echo "Smoke test PASSED"
 

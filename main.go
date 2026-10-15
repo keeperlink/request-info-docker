@@ -6,7 +6,11 @@ import (
     "sort"
 )
 
+var version = "dev"
+
 func handler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Server", "request-info-docker:"+version)
+    w.Header().Set("X-App-Version", version)
     fmt.Fprintln(w, "<html><body>");
 
     fmt.Fprintln(w, "<i>Request Host</i>: ", r.Host, "</br>")

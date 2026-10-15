@@ -2,8 +2,9 @@
 FROM golang:1.26-alpine AS builder
 WORKDIR /src
 COPY main.go .
+ARG APP_VERSION=dev
 # Compile a standalone Linux executable
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /request-info main.go
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.version=${APP_VERSION}" -o /request-info main.go
 
 # Minimal runtime image
 FROM scratch
